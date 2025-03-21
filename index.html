@@ -1,134 +1,335 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>Ranking de Pronósticos</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body { 
-            padding: 20px; 
-            background-color: #0a192f;
-            color: #ffffff !important;
-        }
-        .card { 
-            margin-bottom: 20px;
-            background-color: #112240;
-            border-color: #233554;
-        }
-        .table {
-            color: #ffffff !important;
-        }
-        .table td, .table th {
-            color: #ffffff !important;
-        }
-        .table-striped > tbody > tr:nth-of-type(odd) {
-            background-color: #112240;
-            color: #ffffff !important;
-        }
-        .table-striped > tbody > tr:nth-of-type(even) {
-            background-color: #1a365d;
-            color: #ffffff !important;
-        }
-        .form-control {
-            background-color: #1a365d;
-            border-color: #233554;
-            color: #ffffff !important;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1 class="text-center mb-4 text-light">Ranking de Pronósticos</h1>
-        
-        <!-- Tabla de Pronósticos -->
-        <div class="card mb-4">
-            <div class="card-header bg-primary text-white">
-                <h2 class="h5 mb-0">Pronósticos</h2>
+    <html>
+    <head>
+        <title>Ranking de Pronósticos</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <style>
+            body { 
+                padding: 20px; 
+                background-color: #0a192f;
+                color: #ffffff !important;
+            }
+            .card { 
+                margin-bottom: 20px;
+                background-color: #112240;
+                border-color: #233554;
+            }
+            .table {
+                color: #ffffff !important;
+            }
+            .table td, .table th {
+                color: #ffffff !important;
+            }
+            .table-striped > tbody > tr:nth-of-type(odd) {
+                background-color: #112240;
+            }
+            .table-striped > tbody > tr:nth-of-type(even) {
+                background-color: #1a365d;
+            }
+            thead tr {
+                background-color: #233554 !important;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container mt-5">
+            <h1 class="text-center mb-4 text-light">Ranking de Pronósticos</h1>
+            
+            <!-- Gráfico -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0">Gráfico de Puntuaciones</h2>
+                </div>
+                <div class="card-body">
+                    <canvas id="rankingChart"></canvas>
+                </div>
             </div>
-            <div class="card-body">
-                <div class="table-responsive">
+
+            <!-- Tabla de Apuestas -->
+            <div class="card mb-4">
+                <div class="card-header bg-warning">
+                    <h2 class="h5 mb-0">Tabla de Apuestas</h2>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Jugador</th>
+                                    <th>PAR</th>
+                                    <th>CHI</th>
+                                    <th>BRA</th>
+                                    <th>COL</th>
+                                    <th>PER</th>
+                                    <th>BOL</th>
+                                    <th>ECU</th>
+                                    <th>VEN</th>
+                                    <th>URU</th>
+                                    <th>ARG</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>KEVIN</td>
+                                    <td>1</td>
+                                    <td>0</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>0</td>
+                                    <td>2</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                </tr>
+                                <tr>
+                                    <td>EMANUELLE</td>
+                                    <td>1</td>
+                                    <td>2</td>
+                                    <td>3</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>0</td>
+                                    <td>2</td>
+                                    <td>1</td>
+                                    <td>0</td>
+                                    <td>2</td>
+                                </tr>
+                                <tr>
+                                    <td>ALVARO</td>
+                                    <td>2</td>
+                                    <td>2</td>
+                                    <td>2</td>
+                                    <td>1</td>
+                                    <td>2</td>
+                                    <td>0</td>
+                                    <td>2</td>
+                                    <td>0</td>
+                                    <td>1</td>
+                                    <td>2</td>
+                                </tr>
+                                <tr>
+                                    <td>HUGO</td>
+                                    <td>1</td>
+                                    <td>0</td>
+                                    <td>2</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>0</td>
+                                    <td>2</td>
+                                    <td>0</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                </tr>
+                                <tr>
+                                    <td>CESAR</td>
+                                    <td>1</td>
+                                    <td>0</td>
+                                    <td>2</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>0</td>
+                                    <td>2</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>2</td>
+                                </tr>
+                                <tr>
+                                    <td>CARLOS</td>
+                                    <td>2</td>
+                                    <td>0</td>
+                                    <td>2</td>
+                                    <td>1</td>
+                                    <td>2</td>
+                                    <td>0</td>
+                                    <td>2</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                </tr>
+                                <tr>
+                                    <td>BERLY</td>
+                                    <td>2</td>
+                                    <td>0</td>
+                                    <td>1</td>
+                                    <td>0</td>
+                                    <td>2</td>
+                                    <td>1</td>
+                                    <td>3</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resultados de Partidos -->
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h2 class="h5 mb-0">Resultados de Partidos</h2>
+                </div>
+                <div class="card-body">
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th>Jugador</th>
-                                <th>PAR</th>
-                                <th>CHI</th>
-                                <th>BRA</th>
-                                <th>COL</th>
-                                <th>PER</th>
-                                <th>BOL</th>
-                                <th>ECU</th>
-                                <th>VEN</th>
-                                <th>URU</th>
-                                <th>ARG</th>
+                                <th>Partido</th>
+                                <th>Resultado</th>
+                                <th>Estado</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>KEVIN</td>
+                                <td>PARAGUAY vs CHILE</td>
+                                <td>1 - 0</td>
+                                <td>Jugado</td>
+                            </tr>
+                            <tr>
+                                <td>BRASIL vs COLOMBIA</td>
+                                <td>2 - 1</td>
+                                <td>Jugado</td>
+                            </tr>
+                            <tr>
+                                <td>PERU vs BOLIVIA</td>
+                                <td>3 - 1</td>
+                                <td>Jugado</td>
+                            </tr>
+                            <tr>
+                                <td>ECUADOR vs VENEZUELA</td>
+                                <td>x - x</td>
+                                <td>Jugado</td>
+                            </tr>
+                            <tr>
+                                <td>URUGUAY vs ARGENTINA</td>
+                                <td>x - x</td>
+                                <td>Jugado</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Ranking de Jugadores -->
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h2 class="h5 mb-0">Ranking de Jugadores</h2>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Posición</th>
+                                <th>Jugador</th>
+                                <th>Puntos Totales</th>
+                                <th>Exactos (3 pts)</th>
+                                <th>Aciertos (1 pt)</th>
+                                <th>Contrarios (0 pt)</th>
+                                <th>Partidos Jugados</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>HUGO</td>
+                                <td>7</td>
+                                <td>2</td>
                                 <td>1</td>
                                 <td>0</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>CESAR</td>
+                                <td>7</td>
+                                <td>2</td>
+                                <td>1</td>
+                                <td>0</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>CARLOS</td>
+                                <td>5</td>
+                                <td>1</td>
+                                <td>2</td>
+                                <td>0</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>KEVIN</td>
+                                <td>4</td>
                                 <td>1</td>
                                 <td>1</td>
                                 <td>1</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>ALVARO</td>
+                                <td>4</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>BERLY</td>
+                                <td>3</td>
+                                <td>0</td>
+                                <td>3</td>
+                                <td>0</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td>EMANUELLE</td>
+                                <td>2</td>
                                 <td>0</td>
                                 <td>2</td>
                                 <td>1</td>
-                                <td>1</td>
-                                <td>1</td>
+                                <td>3</td>
                             </tr>
-                            <!-- Más filas aquí -->
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
-
-        <!-- Tabla de Resultados -->
-        <div class="card mb-4">
-            <div class="card-header bg-info text-white">
-                <h2 class="h5 mb-0">Resultados de Partidos</h2>
-            </div>
-            <div class="card-body">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Partido</th>
-                            <th>Resultado</th>
-                            <th>Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Los resultados se cargarán aquí -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Ranking -->
-        <div class="card">
-            <div class="card-header bg-success text-white">
-                <h2 class="h5 mb-0">Ranking de Jugadores</h2>
-            </div>
-            <div class="card-body">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Posición</th>
-                            <th>Jugador</th>
-                            <th>Puntos Totales</th>
-                            <th>Exactos</th>
-                            <th>Aciertos</th>
-                            <th>Contrarios</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- El ranking se cargará aquí -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+        <script>
+            const ctx = document.getElementById('rankingChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['HUGO', 'CESAR', 'CARLOS', 'KEVIN', 'ALVARO', 'BERLY', 'EMANUELLE'],
+                    datasets: [{
+                        label: 'Puntos',
+                        data: [goles1, goles2, jugado],
+                        backgroundColor: '#4a90e2'
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#233554' },
+                            ticks: { color: '#ffffff' }
+                        },
+                        x: {
+                            grid: { color: '#233554' },
+                            ticks: { color: '#ffffff' }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: { color: '#ffffff' }
+                        }
+                    }
+                }
+            });
+        </script>
+    </body>
+    </html>
