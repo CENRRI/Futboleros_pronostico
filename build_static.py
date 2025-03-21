@@ -66,8 +66,10 @@ def generar_html_estatico(pronosticos, resultados, ranking_ordenado, labels, dat
                 <div class="card-header bg-primary text-white">
                     <h2 class="h5 mb-0">Gráfico de Puntuaciones</h2>
                 </div>
-                <div class="card-body chart-container">
-                    <canvas id="rankingChart"></canvas>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="rankingChart" width="400" height="200"></canvas>
+                    </div>
                 </div>
             </div>
 
@@ -212,80 +214,106 @@ def generar_html_estatico(pronosticos, resultados, ranking_ordenado, labels, dat
             <!-- Removemos el botón de guardar ya que no funcionará en GitHub Pages -->
         </div>
         <script>
-            window.onload = function() {
-                const ctx = document.getElementById('rankingChart');
-                if (!ctx) {
-                    console.error('Canvas element not found');
-                    return;
-                }
+            <script>
+                function initChart() {
+                    const ctx = document.getElementById('rankingChart').getContext('2d');
+                    if (!ctx) {
+                        console.error('Canvas context not found');
+                        return;
+                    }
 
-                try {
-                    new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                            labels: [""" + ", ".join(f"'{label}'" for label in labels) + """],
-                            datasets: [{
-                                label: 'Puntos',
-                                data: [""" + ", ".join(map(str, datos)) + """],
-                                backgroundColor: [
-                                    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', 
-                                    '#9966FF', '#FF9F40', '#2ECC71', '#E74C3C',
-                                    '#3498DB', '#F1C40F'
-                                ],
-                                borderColor: '#ffffff',
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: {
-                                    display: false
-                                },
-                                title: {
-                                    display: true,
-                                    text: 'Puntuación Total por Jugador',
-                                    color: '#ffffff',
-                                    font: {
-                                        size: 16
-                                    }
-                                }
+                    try {
+                        new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: [""" + ", ".join(f"'{label}'" for label in labels) + """],
+                                datasets: [{
+                                    label: 'Puntos',
+                                    data: [""" + ", ".join(map(str, datos)) + """],
+                                    backgroundColor: [
+                                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', 
+                                        '#9966FF', '#FF9F40', '#2ECC71', '#E74C3C',
+                                        '#3498DB', '#F1C40F'
+                                    ],
+                                    borderColor: '#ffffff',
+                                    borderWidth: 1
+                                }]
                             },
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    grid: {
-                                        color: 'rgba(255, 255, 255, 0.1)'
-                                    },
-                                    ticks: {
-                                        color: '#ffffff',
-                                        font: {
-                                            size: 12
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        display: true,
+                                        position: 'top',
+                                        labels: {
+                                            color: '#ffffff'
                                         }
                                     }
                                 },
-                                x: {
-                                    grid: {
-                                        display: false
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        grid: {
+                                            color: 'rgba(255, 255, 255, 0.1)'
+                                        },
+                                        ticks: {
+                                            color: '#ffffff'
+                                        }
                                     },
-                                    ticks: {
-                                        color: '#ffffff',
-                                        maxRotation: 45,
-                                        minRotation: 45,
-                                        font: {
-                                            size: 12
+                                    x: {
+                                        grid: {
+                                            display: false
+                                        },
+                                        ticks: {
+                                            color: '#ffffff',
+                                            maxRotation: 45,
+                                            minRotation: 45
                                         }
                                     }
                                 }
                             }
+                        });
+                    } catch (error) {
+                        console.error('Error creating chart:', error);
+                    }
+                }
+
+                // Asegurarse de que Chart.js esté cargado antes de inicializar
+                if (typeof Chart !== 'undefined') {
+                    initChart();
+                } else {
+                    document.addEventListener('DOMContentLoaded', function() {
+                        if (typeof Chart !== 'undefined') {
+                            initChart();
+                        } else {
+                            console.error('Chart.js not loaded');
                         }
                     });
-                } catch (error) {
-                    console.error('Error creating chart:', error);
                 }
-            };
-        </script>
+            </script>
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
+                    ticks: {
+                        color: '#ffffff'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        color: '#ffffff',
+                        maxRotation: 45,
+                        minRotation: 45
+                    }
+                }
+            }
+        }
     </body>
     </html>"""
     return html
