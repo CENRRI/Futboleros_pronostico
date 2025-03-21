@@ -19,7 +19,7 @@ def index():
     pronosticos = procesar_pronosticos(pronosticos_raw)
     resultados = procesar_resultados(obtener_resultados_guardados())
     puntuaciones = calcular_puntos(pronosticos, resultados)
-    return generar_html(pronosticos, resultados, puntuaciones)
+    return render_template('index.html', pronosticos=pronosticos, resultados=resultados, puntuaciones=puntuaciones)
 
 def procesar_pronosticos(raw_data):
     lines = raw_data.strip().split('\n')
