@@ -33,6 +33,18 @@ def generar_html_estatico(pronosticos, resultados, ranking_ordenado, labels, dat
             thead tr {
                 background-color: #233554 !important;
             }
+            .chart-container {
+                position: relative;
+                height: 400px;
+                width: 100%;
+            }
+            .form-control, .form-select {
+                background-color: #1a365d;
+                border-color: #233554;
+                color: #ffffff;
+            }
+            .jugado-row { background-color: rgba(46, 204, 113, 0.2) !important; }
+            .pendiente-row { background-color: rgba(231, 76, 60, 0.2) !important; }
         </style>
     </head>
     <body>
@@ -44,7 +56,7 @@ def generar_html_estatico(pronosticos, resultados, ranking_ordenado, labels, dat
                 <div class="card-header bg-primary text-white">
                     <h2 class="h5 mb-0">Gráfico de Puntuaciones</h2>
                 </div>
-                <div class="card-body">
+                <div class="card-body chart-container">
                     <canvas id="rankingChart"></canvas>
                 </div>
             </div>
@@ -114,17 +126,31 @@ def generar_html_estatico(pronosticos, resultados, ranking_ordenado, labels, dat
                         </thead>
                         <tbody>"""
 
-    # Add match results
+    # Actualizar la sección de resultados de partidos
     for partido, datos in resultados.items():
         equipo1, equipo2 = partido.split()
         estado = "Jugado" if datos['jugado'] else "Pendiente"
-        resultado = f"{datos['goles1']} - {datos['goles2']}" if datos['jugado'] else "-"
         
         html += f"""
-                            <tr>
+                            <tr class="{estado.lower()}-row">
                                 <td>{equipo1} vs {equipo2}</td>
-                                <td>{resultado}</td>
-                                <td>{estado}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <input type="number" class="form-control form-control-sm me-2" 
+                                            style="width: 60px" value="{datos['goles1']}" 
+                                            id="goles1_{equipo1}_{equipo2}" min="0">
+                                        <span class="mx-2">-</span>
+                                        <input type="number" class="form-control form-control-sm ms-2" 
+                                            style="width: 60px" value="{datos['goles2']}" 
+                                            id="goles2_{equipo1}_{equipo2}" min="0">
+                                    </div>
+                                </td>
+                                <td>
+                                    <select class="form-select form-select-sm" id="estado_{equipo1}_{equipo2}">
+                                        <option value="Pendiente" {'' if datos['jugado'] else 'selected'}>Pendiente</option>
+                                        <option value="Jugado" {'selected' if datos['jugado'] else ''}>Jugado</option>
+                                    </select>
+                                </td>
                             </tr>"""
 
     html += """
@@ -172,6 +198,9 @@ def generar_html_estatico(pronosticos, resultados, ranking_ordenado, labels, dat
                 </div>
             </div>
         </div>
+        <div class="text-center mt-3 mb-5">
+            <button class="btn btn-primary" onclick="guardarResultados()">Guardar Resultados</button>
+        </div>
         <script>
             const ctx = document.getElementById('rankingChart').getContext('2d');
             new Chart(ctx, {
@@ -181,48 +210,72 @@ def generar_html_estatico(pronosticos, resultados, ranking_ordenado, labels, dat
                     datasets: [{
                         label: 'Puntos',
                         data: [""" + ", ".join(map(str, datos)) + """],
-                        backgroundColor: '#4a90e2'
+                        backgroundColor: ['#4a90e2', '#2ecc71', '#e74c3c', '#f1c40f', '#9b59b6', '#1abc9c', '#e67e22'],
+                        borderWidth: 1,
+                        borderColor: '#ffffff'
                     }]
                 },
                 options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
                     scales: {
                         y: {
                             beginAtZero: true,
                             grid: { color: '#233554' },
-                            ticks: { color: '#ffffff' }
+                            ticks: { color: '#ffffff', font: { size: 14 } }
                         },
                         x: {
                             grid: { color: '#233554' },
-                            ticks: { color: '#ffffff' }
+                            ticks: { color: '#ffffff', font: { size: 14 } }
                         }
                     },
                     plugins: {
                         legend: {
-                            labels: { color: '#ffffff' }
+                            labels: { color: '#ffffff', font: { size: 14 } }
                         }
                     }
                 }
             });
+
+            function guardarResultados() {
+                const resultados = {};
+                document.querySelectorAll('tr').forEach(row => {
+                    const equipos = row.querySelector('td')?.textContent.split(' vs ');
+                    if (equipos && equipos.length === 2) {
+                        const equipo1 = equipos[0].trim();
+                        const equipo2 = equipos[1].trim();
+                        const goles1 = document.getElementById(`goles1_${equipo1}_${equipo2}`).value;
+                        const goles2 = document.getElementById(`goles2_${equipo1}_${equipo2}`).value;
+                        const estado = document.getElementById(`estado_${equipo1}_${equipo2}`).value;
+                        
+                        resultados[`${equipo1} ${equipo2}`] = {
+                            goles1: parseInt(goles1) || 0,
+                            goles2: parseInt(goles2) || 0,
+                            jugado: estado === 'Jugado'
+                        };
+                    }
+                });
+                
+                fetch('/guardar_resultados', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(resultados)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Resultados guardados correctamente');
+                        location.reload();
+                    } else {
+                        alert('Error al guardar los resultados');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al guardar los resultados');
+                });
+            }
         </script>
     </body>
     </html>"""
     return html
-
-def generar_pagina_estatica():
-    # Obtener datos
-    pronosticos = procesar_pronosticos(pronosticos_raw)
-    resultados = obtener_resultados_guardados()
-    puntuaciones = calcular_puntos(pronosticos, {})
-    
-    ranking_ordenado = sorted(puntuaciones.items(), 
-                            key=lambda x: (x[1]["puntos_totales"], x[1]["exactos"]), 
-                            reverse=True)
-    
-    labels = [f"'{jugador}'" for jugador, _ in ranking_ordenado]
-    datos = [stats["puntos_totales"] for _, stats in ranking_ordenado]
-    
-    with open('index.html', 'w', encoding='utf-8') as f:
-        f.write(generar_html_estatico(pronosticos, resultados, ranking_ordenado, labels, datos))
-
-if __name__ == '__main__':
-    generar_pagina_estatica()
