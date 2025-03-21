@@ -15,14 +15,58 @@
             background-color: #112240;
             border-color: #233554;
         }
+        .table {
+            color: #ffffff !important;
+        }
+        .table td, .table th {
+            color: #ffffff !important;
+        }
+        .table-striped > tbody > tr:nth-of-type(odd) {
+            background-color: #112240;
+        }
+        .table-striped > tbody > tr:nth-of-type(even) {
+            background-color: #1a365d;
+        }
+        thead tr {
+            background-color: #233554 !important;
+        }
     </style>
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="text-center">Sistema de Pronósticos Deportivos</h1>
-        <div id="app-content">
-            <!-- El contenido de la aplicación se cargará aquí -->
+        <h1 class="text-center mb-4 text-light">Ranking de Pronósticos</h1>
+        
+        <!-- Tabla de Pronósticos -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h2 class="h5 mb-0">Pronósticos</h2>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Jugador</th>
+                                <th>Puntos</th>
+                                <th>Exactos</th>
+                                <th>Aciertos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Datos de ejemplo -->
+                            <tr>
+                                <td>KEVIN</td>
+                                <td>10</td>
+                                <td>2</td>
+                                <td>4</td>
+                            </tr>
+                            <!-- Más filas aquí -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
