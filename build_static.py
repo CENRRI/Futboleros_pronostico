@@ -202,41 +202,53 @@ def generar_html_estatico(pronosticos, resultados, ranking_ordenado, labels, dat
             <button class="btn btn-primary" onclick="guardarResultados()">Guardar Resultados</button>
         </div>
         <script>
-            const ctx = document.getElementById('rankingChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: [""" + ", ".join(labels) + """],
-                    datasets: [{
-                        label: 'Puntos',
-                        data: [""" + ", ".join(map(str, datos)) + """],
-                        backgroundColor: ['#4a90e2', '#2ecc71', '#e74c3c', '#f1c40f', '#9b59b6', '#1abc9c', '#e67e22'],
-                        borderWidth: 1,
-                        borderColor: '#ffffff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: '#233554' },
-                            ticks: { color: '#ffffff', font: { size: 14 } }
+            document.addEventListener('DOMContentLoaded', function() {
+                try {
+                    const ctx = document.getElementById('rankingChart').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: [""" + ", ".join(f"'{label}'" for label in labels) + """],
+                            datasets: [{
+                                label: 'Puntos',
+                                data: [""" + ", ".join(map(str, datos)) + """],
+                                backgroundColor: ['#4a90e2', '#2ecc71', '#e74c3c', '#f1c40f', '#9b59b6', '#1abc9c', '#e67e22'],
+                                borderWidth: 1,
+                                borderColor: '#ffffff'
+                            }]
                         },
-                        x: {
-                            grid: { color: '#233554' },
-                            ticks: { color: '#ffffff', font: { size: 14 } }
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    grid: { color: '#233554' },
+                                    ticks: { color: '#ffffff', font: { size: 14 } }
+                                },
+                                x: {
+                                    grid: { color: '#233554' },
+                                    ticks: { 
+                                        color: '#ffffff', 
+                                        font: { size: 14 },
+                                        autoSkip: false,
+                                        maxRotation: 45,
+                                        minRotation: 45
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    labels: { color: '#ffffff', font: { size: 14 } }
+                                }
+                            }
                         }
-                    },
-                    plugins: {
-                        legend: {
-                            labels: { color: '#ffffff', font: { size: 14 } }
-                        }
-                    }
+                    });
+                } catch (error) {
+                    console.error('Error al crear el gráfico:', error);
                 }
             });
-
+            
             function guardarResultados() {
                 const resultados = {};
                 document.querySelectorAll('tr').forEach(row => {
@@ -279,3 +291,23 @@ def generar_html_estatico(pronosticos, resultados, ranking_ordenado, labels, dat
     </body>
     </html>"""
     return html
+
+
+if __name__ == '__main__':
+    # Obtener datos
+    pronosticos = procesar_pronosticos(pronosticos_raw)
+    resultados = obtener_resultados_guardados()
+    ranking_ordenado = calcular_puntos(pronosticos, resultados)
+    
+    # Preparar datos para el gráfico
+    labels = [jugador for jugador, _ in ranking_ordenado]
+    datos = [stats['puntos_totales'] for _, stats in ranking_ordenado]
+    
+    # Generar HTML
+    html_content = generar_html_estatico(pronosticos, resultados, ranking_ordenado, labels, datos)
+    
+    # Guardar el archivo en la ubicación correcta para GitHub Pages
+    with open('index.html', 'w', encoding='utf-8') as f:
+        f.write(html_content)
+    
+    print("Archivo HTML generado correctamente como index.html")
