@@ -6,12 +6,22 @@ def generar_html_estatico(pronosticos, resultados, ranking_ordenado, labels, dat
     <head>
         <title>Ranking de Pronósticos</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
         <style>
             body { 
                 padding: 20px; 
                 background-color: #0a192f;
                 color: #ffffff !important;
+            }
+            .chart-container {
+                position: relative;
+                height: 400px;
+                width: 100%;
+                margin-bottom: 20px;
+            }
+            canvas {
+                background-color: rgba(17, 34, 64, 0.8);
+                border-radius: 4px;
             }
             .card { 
                 margin-bottom: 20px;
@@ -199,12 +209,17 @@ def generar_html_estatico(pronosticos, resultados, ranking_ordenado, labels, dat
             </div>
         </div>
         <div class="text-center mt-3 mb-5">
-            <button class="btn btn-primary" onclick="guardarResultados()">Guardar Resultados</button>
+            <!-- Removemos el botón de guardar ya que no funcionará en GitHub Pages -->
         </div>
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
+            window.onload = function() {
+                const ctx = document.getElementById('rankingChart');
+                if (!ctx) {
+                    console.error('Canvas element not found');
+                    return;
+                }
+
                 try {
-                    const ctx = document.getElementById('rankingChart').getContext('2d');
                     new Chart(ctx, {
                         type: 'bar',
                         data: {
@@ -212,81 +227,64 @@ def generar_html_estatico(pronosticos, resultados, ranking_ordenado, labels, dat
                             datasets: [{
                                 label: 'Puntos',
                                 data: [""" + ", ".join(map(str, datos)) + """],
-                                backgroundColor: ['#4a90e2', '#2ecc71', '#e74c3c', '#f1c40f', '#9b59b6', '#1abc9c', '#e67e22'],
-                                borderWidth: 1,
-                                borderColor: '#ffffff'
+                                backgroundColor: [
+                                    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', 
+                                    '#9966FF', '#FF9F40', '#2ECC71', '#E74C3C',
+                                    '#3498DB', '#F1C40F'
+                                ],
+                                borderColor: '#ffffff',
+                                borderWidth: 1
                             }]
                         },
                         options: {
                             responsive: true,
                             maintainAspectRatio: false,
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    grid: { color: '#233554' },
-                                    ticks: { color: '#ffffff', font: { size: 14 } }
+                            plugins: {
+                                legend: {
+                                    display: false
                                 },
-                                x: {
-                                    grid: { color: '#233554' },
-                                    ticks: { 
-                                        color: '#ffffff', 
-                                        font: { size: 14 },
-                                        autoSkip: false,
-                                        maxRotation: 45,
-                                        minRotation: 45
+                                title: {
+                                    display: true,
+                                    text: 'Puntuación Total por Jugador',
+                                    color: '#ffffff',
+                                    font: {
+                                        size: 16
                                     }
                                 }
                             },
-                            plugins: {
-                                legend: {
-                                    labels: { color: '#ffffff', font: { size: 14 } }
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    grid: {
+                                        color: 'rgba(255, 255, 255, 0.1)'
+                                    },
+                                    ticks: {
+                                        color: '#ffffff',
+                                        font: {
+                                            size: 12
+                                        }
+                                    }
+                                },
+                                x: {
+                                    grid: {
+                                        display: false
+                                    },
+                                    ticks: {
+                                        color: '#ffffff',
+                                        maxRotation: 45,
+                                        minRotation: 45,
+                                        font: {
+                                            size: 12
+                                        }
+                                    }
                                 }
                             }
                         }
                     });
                 } catch (error) {
-                    console.error('Error al crear el gráfico:', error);
+                    console.error('Error creating chart:', error);
                 }
-            });
-            
-            function guardarResultados() {
-                const resultados = {};
-                document.querySelectorAll('tr').forEach(row => {
-                    const equipos = row.querySelector('td')?.textContent.split(' vs ');
-                    if (equipos && equipos.length === 2) {
-                        const equipo1 = equipos[0].trim();
-                        const equipo2 = equipos[1].trim();
-                        const goles1 = document.getElementById(`goles1_${equipo1}_${equipo2}`).value;
-                        const goles2 = document.getElementById(`goles2_${equipo1}_${equipo2}`).value;
-                        const estado = document.getElementById(`estado_${equipo1}_${equipo2}`).value;
-                        
-                        resultados[`${equipo1} ${equipo2}`] = {
-                            goles1: parseInt(goles1) || 0,
-                            goles2: parseInt(goles2) || 0,
-                            jugado: estado === 'Jugado'
-                        };
-                    }
-                });
-                
-                fetch('/guardar_resultados', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(resultados)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Resultados guardados correctamente');
-                        location.reload();
-                    } else {
-                        alert('Error al guardar los resultados');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error al guardar los resultados');
-                });
-            }
+            };
         </script>
     </body>
     </html>"""
