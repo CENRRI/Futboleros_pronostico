@@ -1,7 +1,7 @@
 from collections import defaultdict
 from flask import Flask, render_template_string, request, redirect, url_for
 import json
-
+from flask import Flask, render_template
 app = Flask(__name__)
 
 # Tabla de pronósticos
