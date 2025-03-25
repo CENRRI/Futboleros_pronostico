@@ -5,14 +5,14 @@ from flask import Flask, render_template
 app = Flask(__name__)
 
 # Tabla de pronósticos
-pronosticos_raw = """JUGADOR PARAGUAY CHILE BRASIL COLOMBIA PERU BOLIVIA ECUADOR VENEZUELA URUGUAY ARGENTINA
-KEVIN 1 0 1 1 1 0 2 1 1 1
-EMANUELLE 1 2 3 1 1 0 2 1 0 2
-ALVARO 2 2 2 1 2 0 2 0 1 2
-HUGO 1 0 2 1 1 0 2 0 1 1
-CESAR 1 0 2 1 1 0 2 1 1 2
-CARLOS 2 0 2 1 2 0 2 1 1 1
-BERLY 2 0 1 0 2 1 3 0 0 0"""
+pronosticos_raw = """JUGADOR BOLIVIA URUGUAY CHILE ECUADOR VENEZUELA PERU COLOMBIA PARAGUAY ARGENTINA BRASIL
+KEVIN 2 1 0 1 1 0 3 0 1 1 
+EMANUELLE 1 2 0 1 0 2 1 1 1 2
+ALVARO - - - - - - - - - -
+HUGO 0 2 0 1 0 1 2 0 1 0
+CESAR - - - - - - - - - -
+CARLOS 0 1 0 2 0 2 2 0 1 2
+BERLY 2 1 1 2 1 1 1 1 2 1"""
 
 @app.route('/')
 def index():
